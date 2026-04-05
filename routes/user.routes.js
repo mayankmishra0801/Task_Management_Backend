@@ -3,8 +3,6 @@ const User = require('../models/User');
 const { protect, authorize } = require('../middleware/auth');
 const router = express.Router();
 
-// @route   GET /api/users/team-leads
-// @desc    Get list of team leads (mainly for Managers or registration dropdowns)
 router.get('/team-leads', async (req, res) => {
   try {
     const teamLeads = await User.find({ role: 'Team Lead' }).select('_id username email');
@@ -16,8 +14,7 @@ router.get('/team-leads', async (req, res) => {
 
 router.use(protect);
 
-// @route   GET /api/users
-// @desc    Get assignable users based on role
+
 router.get('/', authorize('Manager', 'Team Lead'), async (req, res) => {
   try {
     const userRole = req.user.role;
@@ -34,7 +31,7 @@ router.get('/', authorize('Manager', 'Team Lead'), async (req, res) => {
     }
     
     // Also return users who might be Team Leads if the current user is Manager.
-    // Let's just return what matches the filter.
+
     const users = await User.find(filter).select('-password');
     res.json(users);
   } catch (error) {

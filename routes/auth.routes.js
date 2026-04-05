@@ -10,19 +10,17 @@ const generateToken = (id) => {
   });
 };
 
-// @route   POST /api/auth/register
-// @desc    Register a user
-// @access  Public
+
 router.post('/register', async (req, res) => {
   try {
     const { username, email, password, role, reportsTo } = req.body;
 
-    // Validate input
+   
     if (!username || !email || !password || !role) {
       return res.status(400).json({ message: 'Please provide all required fields' });
     }
 
-    // Check if user exists
+   
     const userExists = await User.findOne({ email });
     if (userExists) {
       return res.status(400).json({ message: 'User already exists with this email' });
@@ -57,9 +55,7 @@ router.post('/register', async (req, res) => {
   }
 });
 
-// @route   POST /api/auth/login
-// @desc    Authenticate a user
-// @access  Public
+
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;

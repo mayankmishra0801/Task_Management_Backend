@@ -7,8 +7,7 @@ const router = express.Router();
 // All task routes are protected
 router.use(protect);
 
-// @route   GET /api/tasks
-// @desc    Get tasks based on role
+
 router.get('/', async (req, res) => {
   try {
     const userRole = req.user.role;
@@ -37,8 +36,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// @route   POST /api/tasks
-// @desc    Create a task
+
 router.post('/', async (req, res) => {
   try {
     const { title, description, assignedTo } = req.body;
@@ -53,7 +51,7 @@ router.post('/', async (req, res) => {
       // Employee created task automatically assigns to himself
       finalAssignedTo = req.user._id;
     } else if (req.user.role === 'Team Lead') {
-      // Team Lead can assign to self or team member
+      // Team Lead can assign to self or team member 
       if (assignedTo && assignedTo !== req.user._id.toString()) {
         const targetUser = await User.findById(assignedTo);
         if (targetUser && targetUser.reportsTo && targetUser.reportsTo.toString() === req.user._id.toString()) {
@@ -86,8 +84,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-// @route   PUT /api/tasks/:id
-// @desc    Update a task
+
 router.put('/:id', async (req, res) => {
   try {
     const task = await Task.findById(req.params.id);
@@ -161,8 +158,7 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// @route   DELETE /api/tasks/:id
-// @desc    Delete a task
+
 router.delete('/:id', async (req, res) => {
   try {
     const task = await Task.findById(req.params.id);
@@ -171,7 +167,7 @@ router.delete('/:id', async (req, res) => {
       return res.status(404).json({ message: 'Task not found' });
     }
 
-    // Re-using the edit logic for deletion authority for simplicity, 
+    // Re-using the edit logic for deletion 
     // Manager has full rights, Lead has rights over team, Employee has rights over own.
     const userRole = req.user.role;
     const isOwner = task.createdBy.toString() === req.user._id.toString();
