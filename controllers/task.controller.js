@@ -13,6 +13,7 @@ const getTasks = async (req, res) => {
 const createTask = async (req, res) => {
   try {
     const task = await taskService.createTask(req.user, req.body);
+    req.app.get('io').emit('task:changed', { action: 'created', taskId: task._id });
     res.status(201).json(task);
   } catch (error) {
     const statusCode = error.statusCode || 500;
@@ -23,6 +24,7 @@ const createTask = async (req, res) => {
 const updateTask = async (req, res) => {
   try {
     const task = await taskService.updateTask(req.params.id, req.user, req.body);
+    req.app.get('io').emit('task:changed', { action: 'updated', taskId: task._id });
     res.json(task);
   } catch (error) {
     const statusCode = error.statusCode || 500;
@@ -33,6 +35,7 @@ const updateTask = async (req, res) => {
 const deleteTask = async (req, res) => {
   try {
     await taskService.deleteTask(req.params.id, req.user);
+    req.app.get('io').emit('task:changed', { action: 'deleted', taskId: req.params.id });
     res.json({ message: 'Task removed' });
   } catch (error) {
     const statusCode = error.statusCode || 500;
